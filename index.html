@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Подтверждение личности | reCAPTCHA v3</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 2.5rem;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(56, 189, 248, 0.2);
+      padding: 2.5rem 2rem;
+      max-width: 480px;
+      width: 100%;
+      color: #f1f5f9;
+      transition: all 0.2s ease;
+    }
+
+    .icon-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .shield-icon {
+      background: rgba(56, 189, 248, 0.15);
+      border-radius: 50%;
+      width: 5rem;
+      height: 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 0 25px rgba(14, 165, 233, 0.3);
+    }
+
+    .shield-icon svg {
+      width: 2.8rem;
+      height: 2.8rem;
+      stroke: #38bdf8;
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.6rem;
+      color: white;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      padding-bottom: 1.5rem;
+    }
+
+    .info-list {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 1.2rem;
+      padding: 1.2rem 1.2rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      border: 1px solid rgba(71, 85, 105, 0.4);
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      margin-bottom: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .info-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .check-icon {
+      color: #38bdf8;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-top: 0.1rem;
+      flex-shrink: 0;
+    }
+
+    .verify-btn {
+      width: 100%;
+      background: #0284c7;
+      background: linear-gradient(145deg, #0369a1, #0284c7);
+      border: none;
+      border-radius: 1.2rem;
+      padding: 1rem 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 10px 20px -8px rgba(2, 132, 199, 0.5);
+      letter-spacing: 0.3px;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      margin-top: 0.4rem;
+    }
+
+    .verify-btn:hover:not(:disabled) {
+      background: linear-gradient(145deg, #0284c7, #0ea5e9);
+      box-shadow: 0 15px 25px -8px #0284c7;
+    }
+
+    .verify-btn:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .verify-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+      background: #334155;
+      border-color: #475569;
+    }
+
+    .status-message {
+      margin-top: 1.2rem;
+      font-size: 0.9rem;
+      text-align: center;
+      min-height: 2.2rem;
+      color: #94a3b8;
+      transition: color 0.2s;
+    }
+
+    .badge {
+      background: rgba(56, 189, 248, 0.2);
+      color: #bae6fd;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2rem;
+      margin-left: 0.4rem;
+      font-weight: 500;
+    }
+
+    .recaptcha-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      color: #64748b;
+      margin-top: 1.3rem;
+      letter-spacing: 0.3px;
+    }
+
+    .recaptcha-note svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.8;
+    }
+
+    hr {
+      border-color: rgba(148, 163, 184, 0.15);
+      margin: 1.2rem 0 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-container">
+      <div class="shield-icon">
+        <!-- иконка щита -->
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+        </svg>
+      </div>
+    </div>
+
+    <h1>Подтверждение личности</h1>
+    <p class="subtitle">
+      Для продолжения необходимо подтвердить, что вы человек. Мы используем незаметную проверку reCAPTCHA.
+    </p>
+
+    <div class="info-list">
+      <div class="info-item">
+        <span class="check-icon">✓</span>
+        <span>Без неудобных заданий – проверка происходит автоматически</span>
+      </div>
+      <div class="info-item">
+        <span class="check-icon">✓</span>
+        <span>Ваши действия анализируются для безопасности аккаунта</span>
+      </div>
+      <div class="info-item">
+        <span class="check-icon">✓</span>
+        <span>Нажмите кнопку ниже, чтобы подтвердить <span class="badge">v3</span></span>
+      </div>
+    </div>
+
+    <!-- Кнопка с атрибутами reCAPTCHA v3 (автоматическая привязка) -->
+    <button 
+      id="confirmButton"
+      class="verify-btn g-recaptcha"
+      data-sitekey="6LfWAqQqAAAAAOxGqRqVlVqXlWqRqVlVqXlWqRqV"
+      data-callback="onSubmit"
+      data-action="confirm_identity"
+    >
+      <span>✓</span> Подтвердить
+    </button>
+
+    <div id="statusMessage" class="status-message">
+      Ожидание подтверждения...
+    </div>
+
+    <hr />
+    <div class="recaptcha-note">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-6h2v6h-2zm0-8V7h2v2h-2z"/>
+      </svg>
+      <span>Защищено reCAPTCHA v3 · Конфиденциальность</span>
+    </div>
+  </div>
+
+  <!-- Загрузка API reCAPTCHA v3 (по инструкции) -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  <script>
+    /**
+     * Функция обратного вызова (callback), которая вызывается после успешной проверки reCAPTCHA.
+     * Она получает токен, который необходимо отправить на сервер для верификации.
+     * В данном демо-примере токен выводится в консоль и имитируется отправка.
+     */
+    function onSubmit(token) {
+      console.log("reCAPTCHA token получен:", token);
+      
+      const statusElement = document.getElementById('statusMessage');
+      const button = document.getElementById('confirmButton');
+      
+      // Визуальная обратная связь
+      statusElement.innerHTML = '⏳ Проверка токена на сервере...';
+      statusElement.style.color = '#facc15';
+      
+      // Имитация отправки токена на ваш backend для проверки (здесь просто демонстрация)
+      // В реальном проекте вы делаете fetch/POST на ваш сервер, передавая токен.
+      // Сервер должен проверить токен через https://www.google.com/recaptcha/api/siteverify
+      simulateServerVerification(token)
+        .then(response => {
+          // response – объект, который вернул бы ваш сервер после проверки Google.
+          // Пример: { success: true, score: 0.9, action: "confirm_identity" }
+          
+          if (response.success && response.score >= 0.5) {
+            // Успешная проверка: высокая вероятность, что это человек
+            statusElement.innerHTML = '✅ Личность подтверждена. Добро пожаловать!';
+            statusElement.style.color = '#4ade80';
+            
+            // Делаем кнопку неактивной, чтобы показать завершение
+            button.disabled = true;
+            button.innerHTML = '<span>✓</span> Подтверждено';
+            
+            // Здесь можно перенаправить или разблокировать дальнейшие действия.
+            // Например: window.location.href = '/dashboard';
+            console.log('Пользователь верифицирован. Оценка:', response.score);
+          } else if (response.success && response.score < 0.5) {
+            // Низкая оценка – подозрительное поведение. Можно запросить дополнительную проверку.
+            statusElement.innerHTML = '⚠️ Низкий уровень доверия. Пожалуйста, попробуйте позже или обратитесь в поддержку.';
+            statusElement.style.color = '#f97316';
+            button.disabled = false; // оставляем возможность повторить (в реальности можно ограничить)
+            console.warn('Низкая оценка reCAPTCHA:', response.score);
+          } else {
+            // Ошибка валидации токена
+            statusElement.innerHTML = '❌ Ошибка проверки. Попробуйте ещё раз.';
+            statusElement.style.color = '#ef4444';
+            button.disabled = false;
+          }
+        })
+        .catch(error => {
+          console.error('Ошибка соединения с сервером:', error);
+          statusElement.innerHTML = '❌ Сетевая ошибка. Проверьте соединение.';
+          statusElement.style.color = '#ef4444';
+          button.disabled = false;
+        });
+    }
+
+    /**
+     * Имитация серверной проверки токена.
+     * В реальности вы отправляете токен на ваш бэкенд, который связывается с Google.
+     * Здесь для демонстрации возвращается случайный результат (обычно успешный).
+     */
+    function simulateServerVerification(token) {
+      return new Promise((resolve) => {
+        // Имитируем задержку сети
+        setTimeout(() => {
+          // В демо всегда возвращаем успешный результат с высоким score,
+          // чтобы показать позитивный сценарий. В реальности ответ зависит от Google.
+          const mockResponse = {
+            success: true,
+            score: 0.9,            // от 0.0 до 1.0
+            action: "confirm_identity",
+            challenge_ts: new Date().toISOString(),
+            hostname: window.location.hostname
+          };
+          resolve(mockResponse);
+        }, 900);
+      });
+    }
+
+    // Дополнительно: если вы хотите вручную управлять вызовами (программный способ),
+    // но здесь используется автоматическая привязка к кнопке через data-атрибуты.
+    // Код ниже демонстрирует, что можно также запустить execute программно,
+    // но для кнопки мы уже настроили класс g-recaptcha и callback.
+    
+    // На всякий случай обработаем возможное состояние, если скрипт reCAPTCHA не загрузился.
+    window.addEventListener('load', function() {
+      const button = document.getElementById('confirmButton');
+      // Если grecaptcha не определена через несколько секунд, показываем предупреждение.
+      setTimeout(() => {
+        if (typeof grecaptcha === 'undefined') {
+          document.getElementById('statusMessage').innerHTML = '⚠️ reCAPTCHA не загружена. Проверьте подключение.';
+          button.disabled = true;
+        }
+      }, 4000);
+    });
+
+    // При клике на кнопку (до вызова reCAPTCHA) можно показать индикацию.
+    const confirmBtn = document.getElementById('confirmButton');
+    confirmBtn.addEventListener('click', function(e) {
+      // Если кнопка отключена, предотвращаем действие.
+      if (confirmBtn.disabled) return;
+      
+      // Визуальная подсказка, что процесс пошёл.
+      const statusEl = document.getElementById('statusMessage');
+      statusEl.innerHTML = '🔄 Выполняется проверка reCAPTCHA...';
+      statusEl.style.color = '#94a3b8';
+    });
+
+  </script>
+</body>
+</html>
